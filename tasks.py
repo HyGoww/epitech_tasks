@@ -13,14 +13,15 @@
 import random
 from english_words import get_english_words_set
 
-def checkloose(number):
+def checkloose(number: int):
     if(number <= 0):
         return True
     return False
 
 # Récupération d'un mot aléatoire en anglais
-def hasard(values):
-    return random.choice(values)
+def hasard(values: list, length_wanted: int):
+    words = [word for word in values if len(word) == length_wanted]
+    return random.choice(words) if words else None
 
 # Décomposition du mot
 def each_strings(word: str):
@@ -31,10 +32,30 @@ def each_strings(word: str):
         i =+ 1
     return finalString
 
-# Liste de mots en anglais
+
+# fonction récupération d'une liste de mot
+def words_from_txt(file):
+    with open(file, encoding='utf-8') as f:
+        return set(m.strip().lower() for m in f if m.strip())
+# Liste de mots en anglais / fraçais
 englishWords = get_english_words_set(['gcide'], lower=True)
+frenchWords = words_from_txt("frenchwords.txt")
+
+# choix de la langue
+language = input("Choose your language (en/fr) : ")
+languageChoosen = ""
+if(language == "en"):
+    languageChoosen = englishWords
+elif(language == "fr"):
+    languageChoosen = frenchWords
+else: 
+    print("Unknown language")
+
+# choix de la difficulté
+choose = int(input("Choose the length of the word : "))
+
 # mot unique trouvé
-englishWordFind = hasard(list(englishWords))
+englishWordFind = hasard(list(languageChoosen), choose)
 # stockage du mot dans un tableau par caractère
 englishWordArray = []
 for i in range(0, len(englishWordFind)):
@@ -42,11 +63,7 @@ for i in range(0, len(englishWordFind)):
 # génération du même mot mais version caché
 hiddenWord = each_strings(englishWordFind)
 
-def words_from_txt(file):
-    with open(file, encoding='utf-8') as f:
-        return set(m.strip().lower() for m in f if m.strip())
 
-frenchwords = words_from_txt("frenchwords.txt")
 
 # Tant que le mot final n'égal pas le mot trouvé, continuer
 lives = 12
